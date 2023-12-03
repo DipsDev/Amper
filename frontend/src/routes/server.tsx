@@ -34,7 +34,7 @@ function ServerPage() {
         pt={{
           root: {
             className:
-              "bg-[#3E4D5B] w-full px-6 py-5 flex flex-row items-center justify-center md:justify-start",
+              "bg-main-bg w-full px-6 py-5 flex flex-row items-center justify-center md:justify-start",
           },
           menu: {
             className: "flex flex-row items-center gap-4",
@@ -71,9 +71,9 @@ function ServerPage() {
             },
           }}
           footer={footer}
-          className=" shadow-md bg-[#3E4D5B] rounded text-white w-[300px]"
+          className=" shadow-md bg-main-bg rounded text-white w-[300px]"
         >
-          <h3 className="bg-[#1E2934] py-3 rounded-t pl-4 font-medium">
+          <h3 className="bg-main-bg-darker py-3 rounded-t pl-4 font-medium">
             MINECRAFT{" "}
             <span className="text-gray-400 text-sm italic font-normal">
               #{containerId}
