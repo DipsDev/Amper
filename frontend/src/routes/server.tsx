@@ -3,6 +3,9 @@ import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { useParams } from "react-router-dom";
 
+import { TabMenu } from "primereact/tabmenu";
+import { classNames } from "primereact/utils";
+
 function ServerPage() {
   const { containerId } = useParams();
 
@@ -26,6 +29,38 @@ function ServerPage() {
   );
   return (
     <>
+      <TabMenu
+        pt={{
+          root: {
+            className:
+              "bg-[#3E4D5B] w-full px-6 py-5 flex flex-row items-center justify-center md:justify-start",
+          },
+          menu: {
+            className: "flex flex-row items-center gap-4",
+          },
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          action: ({ context, state }: any) => ({
+            className: classNames({
+              "text-[#99A4AD]": state.activeIndex !== context.index,
+              "text-gray-200": state.activeIndex === context.index,
+            }),
+          }),
+        }}
+        model={[
+          {
+            label: "Console",
+            url: `/server/${containerId}/`,
+          },
+          {
+            label: "File Manager",
+            url: `/server/${containerId}/file-manager`,
+          },
+          {
+            label: "Settings",
+            url: `/server/${containerId}/settings`,
+          },
+        ]}
+      />
       <div className="flex flex-row items-center justify-center mt-10">
         <Card
           pt={{
