@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 
 import { TabMenu } from "primereact/tabmenu";
 import { classNames } from "primereact/utils";
+import { Tag } from "primereact/tag";
 
 function ServerPage() {
   const { containerId } = useParams();
@@ -79,7 +80,17 @@ function ServerPage() {
             </span>
           </h3>
           <ol className="mt-5 mb-4 ml-4 my-2 flex flex-col items-start justify-center gap-1 text-sm">
-            <li>STARTING</li>
+            <li className="flex items-center justify-center gap-3">
+              <Tag
+                severity="warning"
+                pt={{
+                  root: {
+                    className: "w-2 h-2 bg-orange-400 rounded-full",
+                  },
+                }}
+              ></Tag>
+              STARTING
+            </li>
             <li>211.19%</li>
             <li>307.02 MB</li>
             <li>164.91 MB</li>
