@@ -6,9 +6,32 @@ import { useParams } from "react-router-dom";
 import { TabMenu } from "primereact/tabmenu";
 import { classNames } from "primereact/utils";
 import { Tag } from "primereact/tag";
+import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
+
+interface Container {
+  Id: string;
+  Created: string;
+  Name: string;
+  State: {
+    Dead: boolean;
+    Error: string;
+    ExitCode: number;
+    Running: boolean;
+    StartedAt: string;
+    Status: string;
+  };
+}
 
 function ServerPage() {
   const { containerId } = useParams();
+  const { data } = useQuery<{
+    data: Container;
+  }>({
+    queryKey: ["container", containerId],
+    queryFn: async ({ queryKey }) =>
+      await axios.get(`http://localhost:8000/api/container/${queryKey[1]}`),
+  });
 
   const footer = (
     <>
@@ -74,22 +97,28 @@ function ServerPage() {
           className=" shadow-md bg-main-bg rounded text-white w-[300px]"
         >
           <h3 className="bg-main-bg-darker py-3 rounded-t pl-4 font-medium">
-            MINECRAFT{" "}
+            {data?.data.Name.substring(1)}{" "}
             <span className="text-gray-400 text-sm italic font-normal">
               #{containerId}
             </span>
           </h3>
           <ol className="mt-5 mb-4 ml-4 my-2 flex flex-col items-start justify-center gap-1 text-sm">
-            <li className="flex items-center justify-center gap-3">
+            <li className="flex items-center justify-center gap-3 uppercase">
               <Tag
                 severity="warning"
                 pt={{
                   root: {
-                    className: "w-2 h-2 bg-orange-400 rounded-full",
+                    className:
+                      "w-2 h-2 rounded-full " +
+                      (data?.data.State.Status === "exited"
+                        ? "bg-red-600"
+                        : data?.data.State.Status === "running"
+                        ? "bg-green-400"
+                        : "bg-orange-400"),
                   },
                 }}
               ></Tag>
-              STARTING
+              {data?.data.State.Status}
             </li>
             <li>211.19%</li>
             <li>307.02 MB</li>
