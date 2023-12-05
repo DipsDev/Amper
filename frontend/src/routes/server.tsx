@@ -1,13 +1,14 @@
 import { Card } from "primereact/card";
 
 import { Button } from "primereact/button";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import { TabMenu } from "primereact/tabmenu";
 import { classNames } from "primereact/utils";
 import { Tag } from "primereact/tag";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
 
 interface Container {
   Id: string;
@@ -24,14 +25,32 @@ interface Container {
 }
 
 function ServerPage() {
+  const navigate = useNavigate();
   const { containerId } = useParams();
-  const { data } = useQuery<{
+  const { data, status } = useQuery<{
     data: Container;
   }>({
     queryKey: ["container", containerId],
     queryFn: async ({ queryKey }) =>
-      await axios.get(`http://localhost:8000/api/container/${queryKey[1]}`),
+      await axios.get(`http://localhost:8000/api/containers/${queryKey[1]}`),
   });
+
+  useEffect(() => {
+    if (status === "error") {
+      navigate("/");
+    }
+  }, [status, navigate]);
+
+  if (status === "pending") {
+    return (
+      <div className="flex flex-col items-center justify-center mt-20">
+        <h2 className="text-3xl font-semibold text-white">Loading Server...</h2>
+        <p className="text-lg font-medium text-gray-300">
+          Is this server a real thing?
+        </p>
+      </div>
+    );
+  }
 
   const footer = (
     <>
@@ -51,6 +70,7 @@ function ServerPage() {
       />
     </>
   );
+
   return (
     <>
       <TabMenu
