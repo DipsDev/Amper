@@ -4,5 +4,5 @@ from .views import Containers, Container
 
 urlpatterns = [
     path('containers', Containers.as_view()),
-    path('container/<slug:container_id>', Container.as_view(), name="container-details")
+    path('containers/<slug:container_id>', Container.as_view(), name="container-details")
 ]
