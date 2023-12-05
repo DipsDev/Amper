@@ -24,7 +24,7 @@ function ServersPage() {
       await axios.get("http://localhost:8000/api/containers"),
   });
   return (
-    <div className="flex flex-row items-center justify-center mt-10">
+    <div className="flex flex-col items-center justify-center mt-10 gap-6">
       {data?.data &&
         data.data.map((v: Container) => {
           return (
@@ -33,7 +33,7 @@ function ServersPage() {
               className="flex flex-row items-center justify-between bg-main-bg w-[50%] py-6 px-4 text-gray-200"
             >
               <div className="flex flex-row items-center justify-start gap-10">
-                <h3>{v.Name.substring(1)}</h3>
+                <h3 className="uppercase">{v.Name.substring(1)}</h3>
                 <p className="flex items-center justify-center gap-3 uppercase">
                   <Tag
                     severity="warning"
