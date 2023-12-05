@@ -2,9 +2,8 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Navbar from "./components/navbar";
 import ServerPage from "./routes/server";
 import ServersPage from "./routes/servers";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
-const queryClient = new QueryClient();
+import { queryClient } from "./shared";
+import { QueryClientProvider } from "@tanstack/react-query";
 
 const router = createBrowserRouter([
   {

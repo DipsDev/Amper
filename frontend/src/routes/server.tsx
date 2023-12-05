@@ -7,8 +7,9 @@ import { TabMenu } from "primereact/tabmenu";
 import { classNames } from "primereact/utils";
 import { Tag } from "primereact/tag";
 import axios from "axios";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
+import { queryClient } from "../shared";
 
 interface Container {
   Id: string;
@@ -22,6 +23,13 @@ interface Container {
     StartedAt: string;
     Status: string;
   };
+  HostConfig: {
+    Memory: number;
+    CpuPercent: number;
+  };
+  Config: {
+    ExposedPorts: unknown;
+  };
 }
 
 function ServerPage() {
@@ -33,6 +41,19 @@ function ServerPage() {
     queryKey: ["container", containerId],
     queryFn: async ({ queryKey }) =>
       await axios.get(`http://localhost:8000/api/containers/${queryKey[1]}`),
+  });
+
+  const { mutate } = useMutation({
+    mutationKey: ["container-action", containerId],
+    mutationFn: async (action: string) =>
+      await axios.post(`http://localhost:8000/api/containers/${containerId}`, {
+        action,
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["container", containerId],
+      });
+    },
   });
 
   useEffect(() => {
@@ -55,18 +76,23 @@ function ServerPage() {
   const footer = (
     <>
       <Button
+        onClick={() => mutate("start")}
         label="start"
-        disabled
-        className="border text-white px-4 py-2 rounded uppercase text-sm disabled:text-gray-400 disabled:border-gray-500"
+        disabled={data?.data.State.Status === "running"}
+        className="border text-white border-gray-400 px-4 hover:brightness-75 transition-all py-2 rounded uppercase text-sm disabled:text-gray-400 disabled:border-gray-500"
       />
       <Button
+        onClick={() => mutate("restart")}
         label="Restart"
-        className="border border-gray-400 text-white px-4 py-2 rounded uppercase text-sm hover:brightness-75 transition-all"
+        disabled={data?.data.State.Status !== "running"}
+        className="border text-white border-gray-400 px-4 hover:brightness-75 transition-all py-2 rounded uppercase text-sm disabled:text-gray-400 disabled:border-gray-500"
       />
       <Button
+        onClick={() => mutate("stop")}
         label="Stop"
         severity="danger"
-        className=" bg-red-500 px-4 py-2 rounded text-white uppercase text-sm hover:bg-red-600 transition-all"
+        disabled={data?.data.State.Status !== "running"}
+        className=" bg-red-500 px-4 py-2 rounded text-white uppercase text-sm hover:bg-red-600 transition-all disabled:brightness-75"
       />
     </>
   );
@@ -122,7 +148,7 @@ function ServerPage() {
               #{containerId}
             </span>
           </h3>
-          <ol className="mt-5 mb-4 ml-4 my-2 flex flex-col items-start justify-center gap-1 text-sm">
+          <ol className="mt-5 mb-4 ml-4 my-2 flex flex-col items-start justify-center gap-2 text-sm">
             <li className="flex items-center justify-center gap-3 uppercase">
               <Tag
                 severity="warning"
@@ -140,9 +166,13 @@ function ServerPage() {
               ></Tag>
               {data?.data.State.Status}
             </li>
-            <li>211.19%</li>
-            <li>307.02 MB</li>
-            <li>164.91 MB</li>
+            <li className="flex flex-row items-center justify-start gap-1">
+              {Object.keys(data?.data.Config.ExposedPorts || {}).map((v, i) => {
+                return <li key={i}>{v}</li>;
+              })}
+            </li>
+            <li>{data?.data.HostConfig.CpuPercent} MB</li>
+            <li>{data?.data.HostConfig.Memory} MB</li>
           </ol>
         </Card>
       </div>
