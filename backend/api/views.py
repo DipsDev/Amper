@@ -60,12 +60,11 @@ class Container(APIView):
         # Handles actions accordingly
         try:
             if (action == "start"):
-                client.containers.run(container_id)
+                container.start()
             elif (action == "stop"):
                 container.stop()
             else:
-                container.stop()
-                client.containers.run(container_id)
+                container.restart()
         except:
             return Response({ "message": "Error performing action"},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         finally:
