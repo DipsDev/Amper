@@ -69,7 +69,7 @@ class Container(APIView):
         except:
             return Response({ "message": "Error performing action"},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         finally:
-            return Response(status=status.HTTP_200_OK)         
+            return Response(container.attrs, status=status.HTTP_200_OK)         
             
         
         
